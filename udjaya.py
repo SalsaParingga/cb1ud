@@ -523,7 +523,7 @@ def alokasi_kendaraan(pelanggan):
 if not st.session_state.login:
 
     st.markdown("<br><br>", unsafe_allow_html=True)
-    kiri, tengah, kanan = st.columns([0.8, 2, 0.8])
+    kiri, tengah, kanan = st.columns([1, 2, 1])
 
     with tengah:
         st.markdown(
