@@ -2456,10 +2456,6 @@ elif menu == "Optimasi Distribusi":
                 "Hasil GA:",
                 [p["nama"] for p in rute_terbaik]
             )
-            st.write(
-                "Urutan asli kendaraan:",
-                [p["nama"] for p in k["pelanggan"]]
-            )
             total_jarak = 0
 
             total_permintaan = sum(
