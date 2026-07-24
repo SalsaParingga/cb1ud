@@ -1384,16 +1384,25 @@ elif menu == "Input Pelanggan":
                 }
 
                 response = requests.get(
-
                     url,
-
                     params=params,
-
-                    headers=headers
-
+                    headers=headers,
+                    timeout=10
                 )
-
-                data = response.json()
+                
+                st.write("Status Code:", response.status_code)
+                st.write("Response:", response.text)
+                
+                if response.status_code != 200:
+                    st.error(f"Request gagal. Status code: {response.status_code}")
+                    st.stop()
+                
+                try:
+                    data = response.json()
+                except Exception:
+                    st.error("Response bukan JSON")
+                    st.code(response.text)
+                    st.stop()
 
                 hasil = []
 
