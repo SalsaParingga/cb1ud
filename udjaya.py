@@ -1390,9 +1390,6 @@ elif menu == "Input Pelanggan":
                     timeout=10
                 )
                 
-                st.write("Status Code:", response.status_code)
-                st.write("Response:", response.text)
-                
                 if response.status_code != 200:
                     st.error(f"Request gagal. Status code: {response.status_code}")
                     st.stop()
