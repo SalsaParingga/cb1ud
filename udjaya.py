@@ -218,8 +218,7 @@ def simpan_safety_stock(
         float(round(ss, 2)),
         float(round(minimum, 2)),
         float(round(maksimum, 2))
-    ])
-# ==========================================
+    ])# ==========================================
 # BAGIAN 2 - FUNGSI PERHITUNGAN JARAK
 # DAN GENETIC ALGORITHM (GA)
 # ==========================================
@@ -254,6 +253,34 @@ def hitung_jarak_rute(rute, gudang):
     ).km
     return total
 
+# ==========================================
+# ROULETTE WHEEL SELECTION
+# ==========================================
+def roulette_selection(populasi, fitness):
+
+    total_fitness = sum(fitness)
+
+    probabilitas = [
+        f / total_fitness
+        for f in fitness
+    ]
+
+    kumulatif = []
+    total = 0
+
+    for p in probabilitas:
+        total += p
+        kumulatif.append(total)
+
+    r = random.random()
+
+    for i, nilai in enumerate(kumulatif):
+        if r <= nilai:
+            return populasi[i]
+
+    return populasi[-1]
+
+
 def genetic_algorithm(
     pelanggan,
     gudang,
@@ -286,13 +313,26 @@ def genetic_algorithm(
             hitung_jarak_rute(krom, gudang))
         
     for _ in range(generasi):
+        # ===============================
+        # HITUNG FITNESS
+        # ===============================
+        fitness = []
 
-        populasi.sort(
-            key=lambda x: hitung_jarak_rute(x, gudang)
-        )
+        for krom in populasi:
+            jarak = hitung_jarak_rute(krom, gudang)
+            fitness.append(1 / jarak)
 
-        parent1 = populasi[0]
-        parent2 = populasi[1]
+        # ===============================
+        # ROULETTE WHEEL SELECTION
+        # ===============================
+        parent1 = roulette_selection(populasi, fitness)
+        parent2 = roulette_selection(populasi, fitness)
+
+        while parent1 == parent2:
+            parent2 = roulette_selection(populasi, fitness)
+
+
+
 
         titik = random.randint(
             1,
@@ -315,7 +355,13 @@ def genetic_algorithm(
                 child[i]
             )
 
-        populasi[-1] = child
+        # Mengganti kromosom dengan fitness terburuk
+        populasi.sort(
+            key=lambda x: hitung_jarak_rute(x, gudang),
+            reverse=True
+        )
+
+        populasi[0] = child
 
     populasi.sort(
     key=lambda x: hitung_jarak_rute(x, gudang)
