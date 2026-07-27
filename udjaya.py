@@ -218,7 +218,9 @@ def simpan_safety_stock(
         float(round(ss, 2)),
         float(round(minimum, 2)),
         float(round(maksimum, 2))
-    ])# ==========================================
+    ])
+    
+# ==========================================
 # BAGIAN 2 - FUNGSI PERHITUNGAN JARAK
 # DAN GENETIC ALGORITHM (GA)
 # ==========================================
@@ -279,7 +281,6 @@ def roulette_selection(populasi, fitness):
             return populasi[i]
 
     return populasi[-1]
-
 
 def genetic_algorithm(
     pelanggan,
