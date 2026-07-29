@@ -286,7 +286,9 @@ def genetic_algorithm(
     pelanggan,
     gudang,
     pop_size=20,
-    generasi=50
+    generasi=50,
+    pc=0.8,          # crossover rate
+    pm=0.2           # mutation rate
 ):
 
     jumlah_pelanggan = len(pelanggan)
@@ -328,22 +330,41 @@ def genetic_algorithm(
         # ===============================
         parent1 = roulette_selection(populasi, fitness)
         parent2 = roulette_selection(populasi, fitness)
-
+        
         while parent1 == parent2:
             parent2 = roulette_selection(populasi, fitness)
-
-
-
-
-        titik = random.randint(
-            1,
-            len(parent1) - 1
-        )
-        child = parent1[:titik]
-        child += [
-            x for x in parent2
-            if x not in child
-        ]
+        # ===========================
+        # ORDER CROSSOVER (OX)
+        # ===========================
+        
+        if random.random() < pc:
+        
+            # Menentukan dua titik potong secara acak
+            titik1, titik2 = sorted(
+                random.sample(range(len(parent1)), 2)
+            )
+        
+            # Inisialisasi offspring
+            child = [None] * len(parent1)
+        
+            # Menyalin gen dari parent1 di antara dua titik potong
+            child[titik1:titik2 + 1] = parent1[titik1:titik2 + 1]
+        
+            # Mengambil gen parent2 yang belum ada pada child
+            sisa_gen = [
+                gen for gen in parent2
+                if gen not in child
+            ]
+        
+            # Mengisi posisi kosong sesuai urutan parent2
+            index = 0
+            for i in range(len(child)):
+                if child[i] is None:
+                    child[i] = sisa_gen[index]
+                    index += 1
+        
+        else:
+            child = parent1.copy()
         # Mutasi hanya jika pelanggan minimal 2
         if len(child) >= 2 and random.random() < 0.2:
             i, j = random.sample(
