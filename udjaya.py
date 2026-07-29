@@ -404,7 +404,8 @@ def genetic_algorithm(
 # FUNGSI AMBIL RUTE JALAN (OSRM)
 # ==========================================
 def ambil_rute_jalan(koordinat):
-
+    print("===== FUNGSI AMBIL_RUTE_JALAN DIPANGGIL =====")
+    print("Jumlah titik:", len(koordinat))
     semua_titik = []
 
     for i in range(len(koordinat)-1):
@@ -419,7 +420,7 @@ def ambil_rute_jalan(koordinat):
         )
 
         try:
-
+            print(url)
             response = requests.get(url, timeout=10)
         
             print("Status:", response.status_code)
