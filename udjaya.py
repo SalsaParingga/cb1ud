@@ -288,7 +288,7 @@ def genetic_algorithm(
     pop_size=20,
     generasi=50,
     pc=0.8,          # crossover rate
-    pm=0.2           # mutation rate
+    pm=0.1           # mutation rate
 ):
 
     jumlah_pelanggan = len(pelanggan)
