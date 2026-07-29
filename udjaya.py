@@ -420,44 +420,44 @@ def ambil_rute_jalan(koordinat):
 
         try:
 
-        response = requests.get(url, timeout=10)
-    
-        print("Status:", response.status_code)
-    
-        if response.status_code != 200:
-            print("OSRM gagal:", response.status_code)
-            print(response.text)
-            continue
-    
-        try:
-            hasil = response.json()
-        except Exception:
-            print("Response bukan JSON")
-            print(response.text)
-            continue
-    
-        print(hasil["code"])
-    
-        if (
-            hasil.get("code") == "Ok"
-            and len(hasil["routes"]) > 0
-        ):
-    
-            titik = hasil["routes"][0]["geometry"]["coordinates"]
-    
-            if semua_titik:
-                titik = titik[1:]
-    
-            semua_titik.extend(
-                [[y, x] for x, y in titik]
-            )
-    
-        else:
-    
-            print("OSRM gagal:", hasil)
-    
-    except Exception as e:
-        print("ERROR:", e)
+            response = requests.get(url, timeout=10)
+        
+            print("Status:", response.status_code)
+        
+            if response.status_code != 200:
+                print("OSRM gagal:", response.status_code)
+                print(response.text)
+                continue
+        
+            try:
+                hasil = response.json()
+            except Exception:
+                print("Response bukan JSON")
+                print(response.text)
+                continue
+        
+            print(hasil["code"])
+        
+            if (
+                hasil.get("code") == "Ok"
+                and len(hasil["routes"]) > 0
+            ):
+        
+                titik = hasil["routes"][0]["geometry"]["coordinates"]
+        
+                if semua_titik:
+                    titik = titik[1:]
+        
+                semua_titik.extend(
+                    [[y, x] for x, y in titik]
+                )
+        
+            else:
+        
+                print("OSRM gagal:", hasil)
+        
+        except Exception as e:
+            print("ERROR:", e)
     return semua_titik
 
 # ==========================================
