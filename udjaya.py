@@ -225,7 +225,6 @@ def simpan_safety_stock(
 # DAN GENETIC ALGORITHM (GA)
 # ==========================================
 def hitung_jarak_rute(rute, gudang):
-
     total = 0
     titik_awal = (
         gudang["Y (Latitude)"],
@@ -233,7 +232,6 @@ def hitung_jarak_rute(rute, gudang):
     )
 
     for pelanggan in rute:
-
         tujuan = (
             pelanggan["lat"],
             pelanggan["lon"]
@@ -253,7 +251,9 @@ def hitung_jarak_rute(rute, gudang):
             gudang["X (Longitude)"]
         )
     ).km
+
     return total
+
 
 # ==========================================
 # ROULETTE WHEEL SELECTION
@@ -282,40 +282,43 @@ def roulette_selection(populasi, fitness):
 
     return populasi[-1]
 
+
+# ==========================================
+# GENETIC ALGORITHM
+# ==========================================
 def genetic_algorithm(
     pelanggan,
     gudang,
     pop_size=20,
     generasi=50,
-    pc=0.8,          # crossover rate
-    pm=0.1           # mutation rate
+    pc=0.8,
+    pm=0.1
 ):
 
     jumlah_pelanggan = len(pelanggan)
 
-    # Tidak ada pelanggan
     if jumlah_pelanggan == 0:
         return []
 
-    # Jika hanya 1 pelanggan, tidak perlu optimasi
     if jumlah_pelanggan == 1:
         return pelanggan.copy()
 
     populasi = []
 
     for _ in range(pop_size):
-
         kromosom = pelanggan.copy()
         random.shuffle(kromosom)
-
         populasi.append(kromosom)
-    print("===== POPULASI AWAL =====")
 
+    print("===== POPULASI AWAL =====")
     for krom in populasi:
-        print([p["nama"] for p in krom],
-            hitung_jarak_rute(krom, gudang))
-        
+        print(
+            [p["nama"] for p in krom],
+            hitung_jarak_rute(krom, gudang)
+        )
+
     for _ in range(generasi):
+
         # ===============================
         # HITUNG FITNESS
         # ===============================
@@ -330,54 +333,53 @@ def genetic_algorithm(
         # ===============================
         parent1 = roulette_selection(populasi, fitness)
         parent2 = roulette_selection(populasi, fitness)
-        
+
         while parent1 == parent2:
             parent2 = roulette_selection(populasi, fitness)
-        # ===========================
+
+        # ===============================
         # ORDER CROSSOVER (OX)
-        # ===========================
-        
+        # ===============================
         if random.random() < pc:
-        
-            # Menentukan dua titik potong secara acak
+
             titik1, titik2 = sorted(
                 random.sample(range(len(parent1)), 2)
             )
-        
-            # Inisialisasi offspring
+
             child = [None] * len(parent1)
-        
-            # Menyalin gen dari parent1 di antara dua titik potong
+
             child[titik1:titik2 + 1] = parent1[titik1:titik2 + 1]
-        
-            # Mengambil gen parent2 yang belum ada pada child
+
             sisa_gen = [
                 gen for gen in parent2
                 if gen not in child
             ]
-        
-            # Mengisi posisi kosong sesuai urutan parent2
+
             index = 0
+
             for i in range(len(child)):
                 if child[i] is None:
                     child[i] = sisa_gen[index]
                     index += 1
-        
+
         else:
             child = parent1.copy()
-        # Mutasi hanya jika pelanggan minimal 2
-        if len(child) >= 2 and random.random() < 0.2:
+
+        # ===============================
+        # SWAP MUTATION
+        # ===============================
+        if len(child) >= 2 and random.random() < pm:
+
             i, j = random.sample(
                 range(len(child)),
                 2
             )
 
-            child[i], child[j] = (
-                child[j],
-                child[i]
-            )
+            child[i], child[j] = child[j], child[i]
 
-        # Mengganti kromosom dengan fitness terburuk
+        # ===============================
+        # REPLACEMENT
+        # ===============================
         populasi.sort(
             key=lambda x: hitung_jarak_rute(x, gudang),
             reverse=True
@@ -386,19 +388,21 @@ def genetic_algorithm(
         populasi[0] = child
 
     populasi.sort(
-    key=lambda x: hitung_jarak_rute(x, gudang)
-)
+        key=lambda x: hitung_jarak_rute(x, gudang)
+    )
+
     hasil = populasi[0]
 
     print("===== HASIL GA =====")
+
     for p in hasil:
         print(p["nama"])
+
     print("===== TERBAIK =====")
     print([p["nama"] for p in hasil])
     print(hitung_jarak_rute(hasil, gudang))
 
     return hasil
-
 # ==========================================
 # BAGIAN 3.1
 # FUNGSI AMBIL RUTE JALAN (OSRM)
